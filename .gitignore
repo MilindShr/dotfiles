@@ -1,0 +1,40 @@
+# ===== secrets — never commit these, even in private history =====
+.ssh/
+.aws/
+.gnupg/
+.ssh_config
+.git-credentials
+*.pem
+*id_rsa*
+*id_ed25519*
+*id_ecdsa*
+known_hosts*
+*.key
+auth.json
+credentials
+token*
+secrets/
+
+# ===== agent state / logs / caches — machine-local, not config =====
+*.db
+*.db-wal
+*.db-shm
+*.sqlite*
+*.jsonl
+*.log
+sessions/
+projects/
+history.jsonl
+globalStorage/
+workspaceStorage/
+logs/
+cache/
+
+# ===== generic junk =====
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+*.swp
+*.tmp
+*~

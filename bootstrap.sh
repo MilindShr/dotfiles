@@ -30,15 +30,13 @@ warn() { printf '\033[1;33m[!]\033[0m %s\n' "$*"; }
 # Map repo-relative paths to absolute home paths. Platform: Linux only.
 dest() { # dest <repo_rel_path> -> echo absolute location
   case "$1" in
-    shell/zshrc)                        echo "$HOME/.zshrc" ;;
     shell/bashrc)                       echo "$HOME/.bashrc" ;;
-    shell/.XCompose)                    echo "$HOME/.XCompose" ;;
     shell/starship.toml)                echo "$HOME/.config/starship.toml" ;;
     git/config)                         echo "$HOME/.config/git/config" ;;
     editors/nvim)                       echo "$HOME/.config/nvim" ;;
-    editors/terminals/alacritty)        echo "$HOME/.config/alacritty" ;;
-    editors/terminals/herdr/config.toml) echo "$HOME/.config/herdr/config.toml" ;;
-    tmux)                               echo "$HOME/.config/tmux" ;;
+    terminals/alacritty)                echo "$HOME/.config/alacritty" ;;
+    terminals/herdr/config.toml)        echo "$HOME/.config/herdr/config.toml" ;;
+    terminals/tmux)                     echo "$HOME/.config/tmux" ;;
     agents/claude/themes)               echo "$HOME/.claude/themes" ;;
     agents/opencode/opencode.json)      echo "$HOME/.config/opencode/opencode.json" ;;
     agents/codex/config.toml)           echo "$HOME/.codex/config.toml" ;;
@@ -70,19 +68,17 @@ link() { # link <repo_rel_path>
 }
 
 link_shell() {
-  [ -f "$REPO_DIR/shell/zshrc" ] && link shell/zshrc
   [ -f "$REPO_DIR/shell/bashrc" ] && link shell/bashrc
   [ -f "$REPO_DIR/shell/starship.toml" ] && link shell/starship.toml
-  [ -f "$REPO_DIR/shell/.XCompose" ] && link shell/.XCompose
   say "shell: rc/prompt linked"
 }
 
 link_editor() {
   [ -f "$REPO_DIR/git/config" ] && link git/config
   [ -d "$REPO_DIR/editors/nvim" ] && link editors/nvim
-  [ -d "$REPO_DIR/editors/terminals/alacritty" ] && link editors/terminals/alacritty
-  [ -f "$REPO_DIR/editors/terminals/herdr/config.toml" ] && link editors/terminals/herdr/config.toml
-  [ -d "$REPO_DIR/tmux" ] && link tmux
+  [ -d "$REPO_DIR/terminals/alacritty" ] && link terminals/alacritty
+  [ -f "$REPO_DIR/terminals/herdr/config.toml" ] && link terminals/herdr/config.toml
+  [ -d "$REPO_DIR/terminals/tmux" ] && link terminals/tmux
   say "editors/terminals linked"
 }
 

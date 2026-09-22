@@ -14,8 +14,9 @@ Everything is versioned. Everything is reproducible. Nothing is sacred.
 
 ## Structure
 
-- `shell/`     zsh/bash rc, starship prompt, XCompose
-- `editors/`   nvim, alacritty, herdr, tmux
+- `shell/`     bash rc, starship prompt
+- `editors/`   nvim
+- `terminals/` alacritty, herdr, tmux
 - `agents/`    claude, opencode, codex configs
 - `skills/`    agent skills (symlinked into ~/.agents/skills & ~/.claude/skills)
 - `bin/`       CLI launchers (claude, codex, opencode, gh, ...)
@@ -26,7 +27,7 @@ Everything is versioned. Everything is reproducible. Nothing is sacred.
 
 1. `git clone https://github.com/MilindShr/dotfiles ~/dotfiles`
 2. `~/dotfiles/bootstrap.sh --with-secrets`
-   (requires `DOTFILES_TRUSTED=1`; unlocks Bitwarden for ssh/gpg)
+   (requires `DOTFILES_TRUSTED=1`; unlocks Bitwarden for ssh/aws/github)
 
 ## Setup on a victim
 

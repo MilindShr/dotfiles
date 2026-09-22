@@ -1,0 +1,18 @@
+{ "workbench.colorTheme": "Ocean Green: Dark",
+"update.mode": "none",
+"window.autoDetectColorScheme": true,
+"claudeCode.preferredLocation": "panel",
+"terminal.integrated.initialHint": false,
+"chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    ".claude/rules": true,
+    "~/.copilot/instructions": true,
+    "~/.claude/rules": true,
+    "/tmp/postman-collections-post-response.instructions.md": true,
+    "/tmp/postman-collections-pre-request.instructions.md": true,
+    "/tmp/postman-folder-post-response.instructions.md": true,
+    "/tmp/postman-folder-pre-request.instructions.md": true,
+    "/tmp/postman-http-request-post-response.instructions.md": true,
+    "/tmp/postman-http-request-pre-request.instructions.md": true
+}
+}

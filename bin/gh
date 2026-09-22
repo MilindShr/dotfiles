@@ -1,0 +1,4 @@
+#!/bin/bash
+export MISE_MINIMUM_RELEASE_AGE=0
+# The system gh binary is installed and available without mise mutation.
+exec /usr/bin/gh "$@"

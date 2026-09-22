@@ -1,53 +1,37 @@
 # dotfiles
 
-Personal dotfiles for a disposable-laptop workflow: a fresh machine is rebuilt
-from this repo + a Bitwarden login, with no access to previous hardware.
+A versioned developer environment that rebuilds itself on any Linux machine
+— mine or a borrowed one — from this repo alone. Secrets never live here.
 
-**This repo is PUBLIC. It contains no secrets and never should.** All
-credentials live in Bitwarden (see `SECRETS-CHECKLIST.md`).
+## Structure
 
-## What's here
+- `shell/`     zsh/bash rc, starship prompt, XCompose
+- `editors/`   nvim (LazyVim), alacritty, herdr, tmux
+- `agents/`    claude, opencode, codex configs
+- `skills/`    agent skills (symlinked into ~/.agents/skills & ~/.claude/skills)
+- `bin/`       CLI launchers (claude, codex, opencode, gh, ...)
+- `platform/`  linux: omarchy + hyprland customizations
+- `runtime/`   mise tools, package inventories, foreign-device install notes
 
-| Path | Contents |
-|------|----------|
-| `shell/` | `.zshrc`, `.bashrc`, `starship.toml` prompt |
-| `git/` | global git config (aliases, diff/rerere settings) |
-| `editors/` | vscode, zed (themes), nvim (LazyVim), terminals (ghostty, alacritty) |
-| `agents/` | claude (CLAUDE.md, settings, themes), opencode (config), codex (portable config, rules) |
-| `skills/` | agent skills (shared by claude/codex/opencode via symlinks) |
-| `platform/linux/` | omarchy + hyprland **customizations** (shell bar, hooks, backgrounds, hypr overrides) |
-| `runtime/` | mise tools, pacman/aur package lists |
-| `tmux/` | tmux.conf |
-| `notes/` | memory / context notes |
+## Setup on my machine
 
-Managed files are **symlinked** into place by `bootstrap.sh`, so editing them
-on any machine immediately updates the repo — the repo never rots outdated by
-drift.
+1. `git clone https://github.com/MilindShr/dotfiles ~/dotfiles`
+2. `~/dotfiles/bootstrap.sh --with-secrets`
+   (requires `DOTFILES_TRUSTED=1`; unlocks Bitwarden for ssh/aws/gh)
 
-## Fresh-machine bootstrap (the whole point)
+## Setup on a borrowed device
 
-1. Install git (+ optional `bitwarden-cli`).
-2. `git clone <this repo> ~/dotfiles`
-3. `~/dotfiles/bootstrap.sh`
-4. For secrets: `~/dotfiles/bootstrap.sh --with-secrets` (unlock Bitwarden once)
+1. `git clone https://github.com/MilindShr/dotfiles ~/dotfiles`
+2. `~/dotfiles/bootstrap.sh --install` — links configs + skills, installs CLIs.
 
-That's it: prompt, editors, terminals, agent configs + skills, omarchy/hypr
-customizations. `aws`/`ssh`/`gh` come from the vault; browser tabs/sessions
-come from your Mozilla account.
+The secrets step can never run here — `--with-secrets` is refused unless
+`DOTFILES_TRUSTED=1` is set. See `runtime/install-foreign.md`.
 
-Run `bootstrap.sh --dry-run` to preview. It is idempotent — re-running never
-duplicates, and existing files are backed up (not clobbered).
+## Keeping it current
 
-## Staying current
+- Configs are symlinks: edits land in the repo, so commit atomically.
+- `./capture.sh` refreshes the derived package lists (`runtime/`).
 
-- Config edits land in the repo automatically (symlinks).
-- `./capture.sh` regenerates the derived lists (installed packages, vscode
-  extensions).
-- Keep it tidy: one logical change per commit.
-
-## OS-agnostic
-
-Layout is platform-neutral; only `dest()` in `bootstrap.sh` maps paths, and it
-currently handles Linux (XDG). Add macOS (`~/Library/Application Support/...`)
-and Windows (`%APPDATA%`) cases there when needed — config file *contents*
-stay the same.
+`bootstrap.sh` is idempotent. Preview with `--dry-run`; existing files are
+backed up, never clobbered. Credentials belong to Bitwarden
+(`SECRETS-CHECKLIST.md`).

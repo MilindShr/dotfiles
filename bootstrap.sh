@@ -1,56 +1,53 @@
 #!/usr/bin/env bash
-# dotfiles/bootstrap.sh — install this repo onto a fresh Linux machine.
-# Idempotent: safe to re-run. Only needs `git` for the config step.
+# dotfiles/bootstrap.sh — install dotfiles on a Linux machine.
+# Idempotent; safe to re-run; existing files are backed up, never clobbered.
 #
-#   ./bootstrap.sh             # dotfiles/skills only (default)
-#   ./bootstrap.sh --with-secrets   # also restore SSH/AWS/GitHub creds from Bitwarden
-#   ./bootstrap.sh --dry-run   # print what would change, change nothing
+#   ./bootstrap.sh                 # dotfiles + skills (default)
+#   ./bootstrap.sh --install       # also install missing CLIs (borrowed devices)
+#   ./bootstrap.sh --with-secrets  # + SSH/AWS/GitHub from Bitwarden (OWN MACHINES ONLY)
+#   ./bootstrap.sh --dry-run       # preview, change nothing
 #
-# Platform: Linux (XDG layout). macOS/Windows can be added later by adding
-# path mapping cases below.
+# --with-secrets refuses unless DOTFILES_TRUSTED=1 is set. Secrets stay on
+# personal machines — never run the secrets step on borrowed hardware.
 
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DRY=false
 WITH_SECRETS=false
+INSTALL=false
 for a in "$@"; do
   case "$a" in
     --dry-run) DRY=true ;;
     --with-secrets) WITH_SECRETS=true ;;
+    --install) INSTALL=true ;;
   esac
 done
 
 say() { printf '\033[1;34m[*]\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m[!]\033[0m %s\n' "$*"; }
 
-# Map repo-relative paths to absolute home paths. Linux only for now.
+# Map repo-relative paths to absolute home paths. Platform: Linux only.
 dest() { # dest <repo_rel_path> -> echo absolute location
   case "$1" in
-    shell/zshrc)                  echo "$HOME/.zshrc" ;;
-    shell/bashrc)                 echo "$HOME/.bashrc" ;;
-    shell/bash_profile)           echo "$HOME/.bash_profile" ;;
-    shell/starship.toml)          echo "$HOME/.config/starship.toml" ;;
-    git/config)                   echo "$HOME/.config/git/config" ;;
-    editors/vscode/settings.json) echo "$HOME/.config/Code/User/settings.json" ;;
-    editors/vscode/keybindings.json) echo "$HOME/.config/Code/User/keybindings.json" ;;
-    editors/zed)                  echo "$HOME/.config/zed" ;;
-    editors/nvim)                 echo "$HOME/.config/nvim" ;;
-    editors/terminals/ghostty)    echo "$HOME/.config/ghostty" ;;
-    editors/terminals/alacritty)  echo "$HOME/.config/alacritty" ;;
-    editors/terminals/kitty)      echo "$HOME/.config/kitty" ;;
-    editors/terminals/foot)       echo "$HOME/.config/foot" ;;
-    tmux)                         echo "$HOME/.config/tmux" ;;
-    agents/claude/CLAUDE.md)      echo "$HOME/.claude/CLAUDE.md" ;;
-    agents/claude/settings.json)  echo "$HOME/.claude/settings.json" ;;
-    agents/claude/themes)         echo "$HOME/.claude/themes" ;;
-    agents/opencode/opencode.json) echo "$HOME/.config/opencode/opencode.json" ;;
-    agents/codex/config.toml)     echo "$HOME/.codex/config.toml" ;;
-    agents/codex/rules)           echo "$HOME/.codex/rules" ;;
-    platform/linux/omarchy/shell.json) echo "$HOME/.config/omarchy/shell.json" ;;
-    platform/linux/omarchy/*)     echo "$HOME/.config/omarchy/${1#platform/linux/omarchy/}" ;;
-    platform/linux/hypr/*)        echo "$HOME/.config/hypr/${1#platform/linux/hypr/}" ;;
-    skills/*)                     echo "$HOME/.agents/skills/$(basename "$1")" ;;
+    shell/zshrc)                        echo "$HOME/.zshrc" ;;
+    shell/bashrc)                       echo "$HOME/.bashrc" ;;
+    shell/.XCompose)                    echo "$HOME/.XCompose" ;;
+    shell/starship.toml)                echo "$HOME/.config/starship.toml" ;;
+    git/config)                         echo "$HOME/.config/git/config" ;;
+    editors/nvim)                       echo "$HOME/.config/nvim" ;;
+    editors/terminals/alacritty)        echo "$HOME/.config/alacritty" ;;
+    editors/terminals/herdr/config.toml) echo "$HOME/.config/herdr/config.toml" ;;
+    tmux)                               echo "$HOME/.config/tmux" ;;
+    agents/claude/themes)               echo "$HOME/.claude/themes" ;;
+    agents/opencode/opencode.json)      echo "$HOME/.config/opencode/opencode.json" ;;
+    agents/codex/config.toml)           echo "$HOME/.codex/config.toml" ;;
+    agents/codex/rules)                 echo "$HOME/.codex/rules" ;;
+    platform/linux/omarchy/shell.json)  echo "$HOME/.config/omarchy/shell.json" ;;
+    platform/linux/omarchy/*)           echo "$HOME/.config/omarchy/${1#platform/linux/omarchy/}" ;;
+    platform/linux/hypr/*)              echo "$HOME/.config/hypr/${1#platform/linux/hypr/}" ;;
+    skills/*)                           echo "$HOME/.agents/skills/$(basename "$1")" ;;
+    bin/*)                              echo "$HOME/.local/bin/$(basename "$1")" ;;
     *) echo "" ;;
   esac
 }
@@ -75,28 +72,32 @@ link() { # link <repo_rel_path>
 link_shell() {
   [ -f "$REPO_DIR/shell/zshrc" ] && link shell/zshrc
   [ -f "$REPO_DIR/shell/bashrc" ] && link shell/bashrc
-  [ -f "$REPO_DIR/shell/bash_profile" ] && link shell/bash_profile
   [ -f "$REPO_DIR/shell/starship.toml" ] && link shell/starship.toml
-  say "shell: prompt/rc from repo"
+  [ -f "$REPO_DIR/shell/.XCompose" ] && link shell/.XCompose
+  say "shell: rc/prompt linked"
 }
 
 link_editor() {
   [ -f "$REPO_DIR/git/config" ] && link git/config
-  [ -f "$REPO_DIR/editors/vscode/settings.json" ] && link editors/vscode/settings.json
-  [ -f "$REPO_DIR/editors/vscode/keybindings.json" ] && link editors/vscode/keybindings.json
-  [ -d "$REPO_DIR/editors/zed" ] && link editors/zed
   [ -d "$REPO_DIR/editors/nvim" ] && link editors/nvim
-  for t in ghostty alacritty kitty foot; do
-    [ -d "$REPO_DIR/editors/terminals/$t" ] && link "editors/terminals/$t"
-  done
+  [ -d "$REPO_DIR/editors/terminals/alacritty" ] && link editors/terminals/alacritty
+  [ -f "$REPO_DIR/editors/terminals/herdr/config.toml" ] && link editors/terminals/herdr/config.toml
   [ -d "$REPO_DIR/tmux" ] && link tmux
   say "editors/terminals linked"
 }
 
+link_bin() {
+  if [ -d "$REPO_DIR/bin" ]; then
+    for f in "$REPO_DIR"/bin/*; do
+      [ -f "$f" ] || continue
+      link "bin/$(basename "$f")"
+    done
+    say "CLI wrappers linked to ~/.local/bin"
+  fi
+}
+
 link_agents() {
-  for name in CLAUDE.md settings.json themes; do
-    [ -e "$REPO_DIR/agents/claude/$name" ] && link "agents/claude/$name"
-  done
+  [ -d "$REPO_DIR/agents/claude/themes" ] && link agents/claude/themes
   [ -f "$REPO_DIR/agents/opencode/opencode.json" ] && link agents/opencode/opencode.json
   [ -f "$REPO_DIR/agents/codex/config.toml" ] && link agents/codex/config.toml
   [ -d "$REPO_DIR/agents/codex/rules" ] && link agents/codex/rules
@@ -124,9 +125,7 @@ link_skills() {
 }
 
 link_platform() {
-  for f in shell.json; do
-    [ -f "$REPO_DIR/platform/linux/omarchy/$f" ] && link "platform/linux/omarchy/$f"
-  done
+  [ -f "$REPO_DIR/platform/linux/omarchy/shell.json" ] && link platform/linux/omarchy/shell.json
   for d in branding hooks extensions backgrounds; do
     [ -d "$REPO_DIR/platform/linux/omarchy/$d" ] && link "platform/linux/omarchy/$d"
   done
@@ -137,6 +136,29 @@ link_platform() {
     [ -e "$REPO_DIR/platform/linux/hypr/$f" ] && link "platform/linux/hypr/$f"
   done
   say "omarchy/hypr customizations linked"
+}
+
+cmd_hint() { # cmd_hint <binary> [package name(s)]
+  local bin="$1"; shift
+  command -v "$bin" >/dev/null 2>&1 && return
+  say "$bin not found — install with one of:"
+  echo "    pacman -S $*      (Arch / omarchy)"
+  echo "    sudo apt install $*"
+  echo "    sudo dnf install $*"
+}
+
+install_tools() {
+  if ! command -v mise >/dev/null 2>&1; then
+    say "installing mise..."
+    curl https://mise.run | sh
+    export PATH="$HOME/.local/bin:$PATH"
+  fi
+  say "installing CLI tools from runtime/mise/config.toml (claude, codex, opencode, gh, ...)"
+  $DRY && { say "would run: mise install"; return; }
+  eval "$(mise activate bash 2>/dev/null)" || true
+  mise install -y || true
+  cmd_hint nvim nvim
+  say "done. If the new CLIs aren't on PATH, start a new shell."
 }
 
 restore_secrets() {
@@ -162,17 +184,25 @@ restore_secrets() {
       bw get note dotfiles-github-token | gh auth login --with-token && say "gh authenticated"
     fi
   fi
-  echo "Add your SSH key to the agent:  ssh-add $HOME/.ssh/id_ed25519 (enter passphrase)"
+  echo "Add SSH key to the agent:  ssh-add $HOME/.ssh/id_ed25519 (enter passphrase)"
 }
 
 main() {
   say "repo: $REPO_DIR  (home: $HOME)"
   link_shell
   link_editor
+  link_bin
   link_agents
   link_skills
   link_platform
-  $WITH_SECRETS && restore_secrets
+  $INSTALL && install_tools
+  if $WITH_SECRETS; then
+    if [ "${DOTFILES_TRUSTED:-0}" != "1" ]; then
+      echo "Refusing: --with-secrets requires DOTFILES_TRUSTED=1. Secrets belong on personal machines only." >&2
+      exit 1
+    fi
+    restore_secrets
+  fi
   say "done."
 }
 

@@ -20,6 +20,5 @@ regen() { # regen <out file>
 
 regen runtime/pacman-explicit.txt pacman -Qqe
 regen runtime/aur-packages.txt pacman -Qqem
-regen editors/vscode/extensions.txt code --list-extensions
 
 echo "--- managed (symlinked) files are already in sync. Check 'git status' and commit atomically."

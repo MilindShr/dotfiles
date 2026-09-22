@@ -43,7 +43,7 @@ dest() { # dest <repo_rel_path> -> echo absolute location
     agents/codex/rules)                 echo "$HOME/.codex/rules" ;;
     platform/linux/omarchy/shell.json)  echo "$HOME/.config/omarchy/shell.json" ;;
     platform/linux/omarchy/*)           echo "$HOME/.config/omarchy/${1#platform/linux/omarchy/}" ;;
-    platform/linux/hypr/*)              echo "$HOME/.config/hypr/${1#platform/linux/hypr/}" ;;
+    hypr/*)                             echo "$HOME/.config/hypr/${1#hypr/}" ;;
     skills/*)                           echo "$HOME/.agents/skills/$(basename "$1")" ;;
     bin/*)                              echo "$HOME/.local/bin/$(basename "$1")" ;;
     *) echo "" ;;
@@ -128,7 +128,7 @@ link_platform() {
   for f in hyprland.lua .luarc.json monitors.lua \
            input.lua bindings.lua looknfeel.lua autostart.lua \
            hyprsunset.conf xdph.conf; do
-    [ -e "$REPO_DIR/platform/linux/hypr/$f" ] && link "platform/linux/hypr/$f"
+    [ -e "$REPO_DIR/hypr/$f" ] && link "hypr/$f"
   done
   say "omarchy/hypr customizations linked"
 }

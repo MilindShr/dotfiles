@@ -19,24 +19,28 @@ Everything is versioned. Everything is reproducible. Nothing is sacred.
 - `terminals/` alacritty, herdr, tmux
 - `agents/`    claude, opencode, codex configs
 - `skills/`    agent skills (symlinked into ~/.agents/skills & ~/.claude/skills)
-- `bin/`       CLI launchers (claude, codex, opencode, gh, ...)
+- `bin/`       CLI launchers + `verify-dev-env.sh` (migration check)
 - `hypr/`      hyprland lua config, hyprsunset + xdph
 - `omarchy/`   linux desktop: shell.json, hooks, branding, backgrounds
-- `runtime/`   mise tools, package inventories, foreign-device install notes
+- `runtime/`   mise tools, package inventories
 
 ## Setup on your machine
 
 1. `git clone https://github.com/MilindShr/dotfiles ~/dotfiles`
-2. `~/dotfiles/bootstrap.sh --with-secrets`
-   (requires `DOTFILES_TRUSTED=1`; unlocks Bitwarden for ssh/aws/github)
+2. `DOTFILES_TRUSTED=1 ~/dotfiles/bootstrap.sh --with-secrets`
+   (unlocks Bitwarden for ssh/aws/github)
+3. `~/dotfiles/bin/verify-dev-env.sh --secrets` — all checks pass
 
 ## Setup on a victim
 
 1. `git clone https://github.com/MilindShr/dotfiles ~/dotfiles`
 2. `~/dotfiles/bootstrap.sh --install` — links configs + skills, installs CLIs.
+3. `~/dotfiles/bin/verify-dev-env.sh`
 
 The secrets step can never run here - `--with-secrets` is refused unless
-`DOTFILES_TRUSTED=1` is set. See `runtime/install-foreign.md`.
+`DOTFILES_TRUSTED=1` is set.
+
+The full ordered procedure for either case lives in **[`RUNBOOK.md`](RUNBOOK.md)**.
 
 ## Keeping it current
 

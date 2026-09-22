@@ -1,0 +1,6 @@
+prefix_rule(pattern=["/usr/bin/bash", "-lc", "gh issue view 325 --json title,body,comments,labels,state,url --repo \"$(git remote get-url origin | sed -E 's#.*github.com[:/]([^/]+/[^/.]+)(\\.git)?#\\1#')\""], decision="allow")
+prefix_rule(pattern=["/usr/bin/bash", "-lc", "pnpm generate:types && pnpm migrate:create && NODE_ENV=development pnpm exec vitest run --config ./vitest.config.mts tests/int/offer-workflow-data-model.int.spec.ts"], decision="allow")
+prefix_rule(pattern=["/usr/bin/bash", "-lc", "NODE_ENV=development pnpm exec vitest run --config ./vitest.config.mts tests/int/offer-workflow-data-model.int.spec.ts && git status --short && git diff --check"], decision="allow")
+prefix_rule(pattern=["gh", "issue", "view"], decision="allow")
+prefix_rule(pattern=["git", "diff", "HEAD", "--", "src/app/(payload)/collections/OfferPeriods.ts", "src/hooks/offers/offerLifecycle.ts", "src/migrations/index.ts", "src/payload.config.ts", "tests/int/offer-submission-workflow.int.spec.ts", "tests/int/offer-workflow-data-model.int.spec.ts", "src/payload-types.ts"], decision="allow")
+prefix_rule(pattern=["gh", "pr", "view", "336", "--json", "number,title,body,baseRefName,headRefName,headRefOid,baseRefOid,commits,files,url"], decision="allow")

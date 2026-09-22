@@ -41,8 +41,8 @@ dest() { # dest <repo_rel_path> -> echo absolute location
     agents/opencode/opencode.json)      echo "$HOME/.config/opencode/opencode.json" ;;
     agents/codex/config.toml)           echo "$HOME/.codex/config.toml" ;;
     agents/codex/rules)                 echo "$HOME/.codex/rules" ;;
-    platform/linux/omarchy/shell.json)  echo "$HOME/.config/omarchy/shell.json" ;;
-    platform/linux/omarchy/*)           echo "$HOME/.config/omarchy/${1#platform/linux/omarchy/}" ;;
+    omarchy/shell.json)                 echo "$HOME/.config/omarchy/shell.json" ;;
+    omarchy/*)                          echo "$HOME/.config/omarchy/${1#omarchy/}" ;;
     hypr/*)                             echo "$HOME/.config/hypr/${1#hypr/}" ;;
     skills/*)                           echo "$HOME/.agents/skills/$(basename "$1")" ;;
     bin/*)                              echo "$HOME/.local/bin/$(basename "$1")" ;;
@@ -121,9 +121,9 @@ link_skills() {
 }
 
 link_platform() {
-  [ -f "$REPO_DIR/platform/linux/omarchy/shell.json" ] && link platform/linux/omarchy/shell.json
+  [ -f "$REPO_DIR/omarchy/shell.json" ] && link omarchy/shell.json
   for d in branding hooks extensions backgrounds; do
-    [ -d "$REPO_DIR/platform/linux/omarchy/$d" ] && link "platform/linux/omarchy/$d"
+    [ -d "$REPO_DIR/omarchy/$d" ] && link "omarchy/$d"
   done
   for f in hyprland.lua .luarc.json monitors.lua \
            input.lua bindings.lua looknfeel.lua autostart.lua \

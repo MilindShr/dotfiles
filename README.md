@@ -21,7 +21,7 @@ Everything is versioned. Everything is reproducible. Nothing is sacred.
 - `skills/`    agent skills (symlinked into ~/.agents/skills & ~/.claude/skills)
 - `bin/`       CLI launchers (claude, codex, opencode, gh, ...)
 - `hypr/`      hyprland lua config, hyprsunset + xdph
-- `platform/`  linux: omarchy customizations
+- `omarchy/`   linux desktop: shell.json, hooks, branding, backgrounds
 - `runtime/`   mise tools, package inventories, foreign-device install notes
 
 ## Setup on your machine

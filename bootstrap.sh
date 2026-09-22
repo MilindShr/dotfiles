@@ -125,10 +125,9 @@ link_platform() {
   for d in branding hooks extensions backgrounds; do
     [ -d "$REPO_DIR/platform/linux/omarchy/$d" ] && link "platform/linux/omarchy/$d"
   done
-  for f in hyprland.conf hyprland.lua .luarc.json monitors.conf monitors.lua \
-           input.conf input.lua bindings.conf bindings.lua looknfeel.conf looknfeel.lua \
-           autostart.conf autostart.lua hypridle.conf hyprlock.conf hyprsunset.conf \
-           envs.conf xdph.conf; do
+  for f in hyprland.lua .luarc.json monitors.lua \
+           input.lua bindings.lua looknfeel.lua autostart.lua \
+           hyprsunset.conf xdph.conf; do
     [ -e "$REPO_DIR/platform/linux/hypr/$f" ] && link "platform/linux/hypr/$f"
   done
   say "omarchy/hypr customizations linked"

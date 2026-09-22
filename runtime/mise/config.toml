@@ -1,4 +1,9 @@
 [tools]
+# Base runtime; per-project versions live in project .mise.toml
+node = "latest"
+pnpm = "latest"
+python = "latest"
+uv = "latest"
 claude = "latest"
 codex = "latest"
 crush = "latest"

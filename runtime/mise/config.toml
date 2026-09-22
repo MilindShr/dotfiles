@@ -1,0 +1,10 @@
+[tools]
+claude = "latest"
+codex = "latest"
+crush = "latest"
+gh = "latest"
+"github:can1357/oh-my-pi" = "latest"
+"npm:@kitlangton/ghui" = "latest"
+"npm:@xai-official/grok" = "latest"
+opencode = "latest"
+pi = "latest"

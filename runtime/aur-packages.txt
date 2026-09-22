@@ -1,0 +1,7 @@
+aws-session-manager-plugin
+calendarchy-bin
+freebuff-bin
+geekbench
+hyprmon-bin
+omniroute
+onedriver
